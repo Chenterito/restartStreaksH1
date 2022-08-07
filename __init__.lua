@@ -10,16 +10,18 @@ function player_connected(player)
                 
     end)
     player:onnotifyonce("spawned_player", function()
-        player.valuecapture = player.pers["captures"] 
-        local monitorCapture = game:oninterval(function() 
-            if(player.valuecapture ~= player.pers["captures"]) then
-                game:scriptcall("maps/mp/gametypes/_damage","incrementkillstreak", player ) -- Notify add 1 killstreak
-                player.valuecapture = player.pers["captures"] 
-            end
-        end, 1000)
+        if(game:getdvar("g_gametype") == "dom") then -- Just in DOMINATION
+            player.valuecapture = player.pers["captures"] 
+            local monitorCapture = game:oninterval(function() 
+                if(player.valuecapture ~= player.pers["captures"]) then
+                    game:scriptcall("maps/mp/gametypes/_damage","incrementkillstreak", player ) -- Notify add 1 killstreak
+                    player.valuecapture = player.pers["captures"] 
+                end
+            end, 1000)
     
-        monitorCapture:endon(player, "disconnect")
-        monitorCapture:endon(level, "game_ended")
+            monitorCapture:endon(player, "disconnect")
+            monitorCapture:endon(level, "game_ended")
+        end
     end)
 
     player:onnotify("destroyed_helicopter", function() 
