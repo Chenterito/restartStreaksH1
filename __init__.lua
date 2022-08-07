@@ -9,15 +9,24 @@ function player_connected(player)
         player.currentstreak = 0
                 
     end)
+    player:onnotifyonce("spawned_player", function()
+        player.valuecapture = player.pers["captures"] 
+        local monitorCapture = game:oninterval(function() 
+            if(player.valuecapture ~= player.pers["captures"]) then
+                game:scriptcall("maps/mp/gametypes/_damage","incrementkillstreak", player ) -- Notify add 1 killstreak
+                player.valuecapture = player.pers["captures"] 
+            end
+        end, 1000)
+    
+        monitorCapture:endon(player, "disconnect")
+        monitorCapture:endon(level, "game_ended")
+    end)
 
-    player:onnotify("killed_enemy", function() player:monitorkillerplayer()
-
-    end)       
+    player:onnotify("got_killstreak", function() player:monitorkillerplayer() end) -- Check cycle killstreak  
     
 end
 
 function entity:monitorkillerplayer()
-    
     if self.pers["cur_kill_streak"] > streakheli then
         self.currentstreak = self.currentstreak + 1
         
