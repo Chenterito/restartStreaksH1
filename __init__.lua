@@ -22,6 +22,10 @@ function player_connected(player)
         monitorCapture:endon(level, "game_ended")
     end)
 
+    player:onnotify("destroyed_helicopter", function() 
+        game:scriptcall("maps/mp/gametypes/_damage","incrementkillstreak", player ) -- Notify add 1 killstreak
+    end)
+
     player:onnotify("got_killstreak", function() player:monitorkillerplayer() end) -- Check cycle killstreak  
     
 end
@@ -49,7 +53,5 @@ function entity:monitorkillerplayer()
     end
 
 end
-
 ----------
-
 level:onnotify("connected", player_connected)
